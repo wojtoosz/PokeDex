@@ -9,10 +9,10 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
+class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var collection: UICollectionView!
+    @IBOutlet weak var tableView: UITableView!
     var pokemon = [Pokemon]()
     var filteredPokemon = [Pokemon]()
     var musicPlayer: AVAudioPlayer!
@@ -20,8 +20,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        collection.delegate = self
-        collection.dataSource = self
+        tableView.delegate = self
+        tableView.dataSource = self
         searchBar.delegate = self
         searchBar.returnKeyType = UIReturnKeyType.Done
         parsePokemonCSV()
@@ -64,10 +64,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        if let cell = collectionView.dequeueReusableCellWithReuseIdentifier("PokeCell", forIndexPath: indexPath) as? PokeCell {
-            
+      
+        
+        if let cell = tableView.dequeueReusableCellWithIdentifier("PokeCell") as? PokeCell {
             let poke: Pokemon!
             if inSearchMode {
                 poke = filteredPokemon[indexPath.row]
@@ -75,27 +76,20 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 poke = pokemon[indexPath.row]
             }
             cell.configureCell(poke)
-            
+            //let backgroundView = UIView()
+            //backgroundView.backgroundColor = UIColor(red: 251/255.0, green: 50/255.0, blue: 72/255.0, alpha: 1)
+            //cell.selectedBackgroundView = backgroundView
             return cell
         } else {
-            return UICollectionViewCell()
+            return UITableViewCell()
         }
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        var poke: Pokemon!
-        if inSearchMode {
-            poke = filteredPokemon[indexPath.row]
-        } else {
-            poke = pokemon[indexPath.row]
-        }
-        
-        performSegueWithIdentifier("PokemonDetailVC", sender: poke)
-        
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if inSearchMode {
             return filteredPokemon.count
@@ -104,16 +98,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return pokemon.count
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        
-        return 1
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var poke: Pokemon!
+        if inSearchMode {
+            poke = filteredPokemon[indexPath.row]
+        } else {
+            poke = pokemon[indexPath.row]
+        }
+        performSegueWithIdentifier("PokemonDetailVC", sender: poke)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        
-        return CGSizeMake(105, 105)
-    }
-
     @IBAction func musicBtnPressed(sender: UIButton!) {
         
         if musicPlayer.playing {
@@ -134,13 +128,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         if searchBar.text == nil || searchBar.text == "" {
             inSearchMode = false
             view.endEditing(true)
-            collection.reloadData()
+            tableView.reloadData()
             
         } else {
             inSearchMode = true
             let lower = searchBar.text!.lowercaseString
             filteredPokemon = pokemon.filter({$0.name.rangeOfString(lower) != nil})
-            collection.reloadData()
+            tableView.reloadData()
             
         }
     }

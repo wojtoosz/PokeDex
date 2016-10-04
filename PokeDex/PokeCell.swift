@@ -2,14 +2,14 @@
 //  PokeCell.swift
 //  PokeDex
 //
-//  Created by Wojciech Charuza on 13.07.2016.
+//  Created by Wojciech Charuza on 05.09.2016.
 //  Copyright © 2016 Wojciech Charuza. All rights reserved.
 //
 
 import UIKit
 
-class PokeCell: UICollectionViewCell {
-    
+class PokeCell: UITableViewCell {
+
     @IBOutlet weak var thumbImg: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
     
@@ -17,8 +17,6 @@ class PokeCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
-        layer.cornerRadius = 5.0
     }
     
     func configureCell(pokemon: Pokemon) {
@@ -28,5 +26,5 @@ class PokeCell: UICollectionViewCell {
         
         
     }
-    
+
 }
